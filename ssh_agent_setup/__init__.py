@@ -3,11 +3,12 @@ from . import parse_agent_variables
 import logging
 import os
 import atexit
+import sys
 
 
 def _kill_agent():
     logging.info('killing previously started ssh-agent')
-    subprocess.run(['ssh-agent', '-k'])
+    subprocess.run(['ssh-agent', '-k'], stdout=sys.stderr)
     del os.environ['SSH_AUTH_SOCK']
     del os.environ['SSH_AGENT_PID']
 
@@ -35,6 +36,6 @@ def setup():
 
 
 def add_key(key_file):
-    process = subprocess.run(['ssh-add', key_file])
+    process = subprocess.run(['ssh-add', key_file], stdout=sys.stderr)
     if process.returncode != 0:
         raise Exception('failed to add the key: {}'.format(key_file))
